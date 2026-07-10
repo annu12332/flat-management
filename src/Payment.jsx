@@ -126,7 +126,7 @@ export default function PaymentPage() {
             if (!res.ok) {
                 // Try to surface a useful message from the API, fall back to a generic one
                 let message =
-                    "অনুরোধ পাঠানো যায়নি। তথ্য যাচাই করে আবার চেষ্টা করুন, অথবা কিছুক্ষণ পর আবার চেষ্টা করুন।";
+                    "Opps! Request not submitted..Try again.";
                 try {
                     const data = await res.json();
                     if (data?.message) message = data.message;
@@ -142,7 +142,7 @@ export default function PaymentPage() {
         } catch (e) {
             // Network / unexpected error — show error, not success
             setSubmitError(
-                "নেটওয়ার্ক সমস্যার কারণে অনুরোধ পাঠানো যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।"
+                "Network Issue, please check your internet connection"
             );
         } finally {
             setSubmitting(false);
