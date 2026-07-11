@@ -32,7 +32,7 @@ export default function TermsAndConditions() {
                 <div className="max-w-2xl mx-auto">
                     <h1 className="text-3xl font-bold text-white mb-2">Terms &amp; Conditions</h1>
                     <p className="text-slate-400">
-                        Please read these terms carefully before using Vara Khata.
+                        Please read these terms carefully before using Rent Book.
                     </p>
                     <p className="text-slate-500 text-xs mt-2">Last updated: July 2026</p>
                 </div>
@@ -42,9 +42,9 @@ export default function TermsAndConditions() {
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 text-sm leading-relaxed text-gray-700">
                     <Section number={1} title="Acceptance of Terms">
                         <p>
-                            By subscribing to Vara Khata, you ("User") agree to be bound by these Terms
+                            By subscribing to Rent Book, you ("User") agree to be bound by these Terms
                             and Conditions. If you do not agree, please do not use the application.
-                            These terms apply to all users of Vara Khata, developed and operated by
+                            These terms apply to all users of Rent Book, developed and operated by
                             Jabed International.
                         </p>
                     </Section>
@@ -52,7 +52,7 @@ export default function TermsAndConditions() {
                     <Section number={2} title="Subscription & Payment">
                         <ul className="list-disc list-inside space-y-1 text-gray-600">
                             <li>
-                                Vara Khata operates on a subscription-based model. Access to the app
+                                Rent Book operates on a subscription-based model. Access to the app
                                 requires an active, paid subscription.
                             </li>
                             <li>
@@ -105,7 +105,7 @@ export default function TermsAndConditions() {
                     <Section number={4} title="Use of the Application">
                         <ul className="list-disc list-inside space-y-1 text-gray-600">
                             <li>
-                                Vara Khata is licensed to you for personal or business use in managing
+                                Rent Book is licensed to you for personal or business use in managing
                                 your own rental properties. You may not resell, sublicense, or
                                 redistribute access to the app.
                             </li>
@@ -114,7 +114,7 @@ export default function TermsAndConditions() {
                                 tenant information, transaction records, and property details.
                             </li>
                             <li>
-                                You agree not to use Vara Khata for any unlawful purpose, including
+                                You agree not to use Rent Book for any unlawful purpose, including
                                 fraudulent rental transactions, falsification of tenant records, or any
                                 activity that violates Bangladesh law.
                             </li>
@@ -128,7 +128,7 @@ export default function TermsAndConditions() {
                     <Section number={5} title="Data Privacy & Security">
                         <ul className="list-disc list-inside space-y-1 text-gray-600">
                             <li>
-                                Vara Khata stores tenant information, transaction records, and property
+                                Rent Book stores tenant information, transaction records, and property
                                 data on secure servers. We take reasonable precautions to protect your
                                 data.
                             </li>
@@ -168,7 +168,7 @@ export default function TermsAndConditions() {
                             </li>
                             <li>
                                 Jabed International reserves the right to update, modify, or discontinue
-                                features of Vara Khata at any time, with reasonable notice where possible.
+                                features of Rent Book at any time, with reasonable notice where possible.
                             </li>
                             <li>
                                 Feature availability varies by subscription plan. Upgrades can be made at
@@ -179,7 +179,7 @@ export default function TermsAndConditions() {
 
                     <Section number={7} title="Limitation of Liability">
                         <p>
-                            Vara Khata is a tool to assist with rental management. Jabed International
+                            Rent Book is a tool to assist with rental management. Jabed International
                             is not responsible for financial losses, disputes between landlords and
                             tenants, or any damages arising from reliance on data within the
                             application. The app is provided "as is," without warranties of any kind
@@ -212,7 +212,7 @@ export default function TermsAndConditions() {
                     <Section number={9} title="Governing Law">
                         <p>
                             These Terms and Conditions are governed by the laws of the People's
-                            Republic of Bangladesh. Any disputes arising from the use of Vara Khata
+                            Republic of Bangladesh. Any disputes arising from the use of Rent Book
                             shall be subject to the jurisdiction of the courts of Bangladesh.
                         </p>
                     </Section>
@@ -229,7 +229,7 @@ export default function TermsAndConditions() {
                     <Section number={11} title="Contact">
                         <p>
                             For support, refund requests, or any questions regarding these terms,
-                            please contact Jabed International through the official Vara Khata
+                            please contact Jabed International through the official Rent Book
                             channels provided in the app.
                         </p>
                     </Section>
@@ -260,7 +260,7 @@ export default function TermsAndConditions() {
 
             {/* FOOTER */}
             <footer className="py-8 px-6 text-center text-sm mt-4 text-[#6B7A99]">
-                <p>© 2026 Vara Khata by Jabed International. All rights reserved.</p>
+                <p>© 2026 Rent Book by Jabed International. All rights reserved.</p>
                 <p className="mt-1">Questions? Contact us through the app.</p>
             </footer>
         </div>

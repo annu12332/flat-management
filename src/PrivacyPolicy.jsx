@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
                 <div className="max-w-2xl mx-auto">
                     <h1 className="text-3xl font-bold text-white mb-2">Privacy Policy</h1>
                     <p className="text-slate-400">
-                        How Vara Khata collects, uses, and protects your information.
+                        How Rent Book collects, uses, and protects your information.
                     </p>
                     <p className="text-slate-500 text-xs mt-2">Last updated: July 2026</p>
                 </div>
@@ -41,10 +41,10 @@ export default function PrivacyPolicy() {
             <div className="max-w-3xl mx-auto px-4 py-10">
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 text-sm leading-relaxed text-gray-700">
                     <p className="mb-6 text-gray-600">
-                        Jabed International ("we", "us", "our") operates the Vara Khata rental
+                        Jabed International ("we", "us", "our") operates the Rent Book rental
                         management application. This Privacy Policy explains what information we
                         collect from landlords and their tenants, how we use it, and the choices you
-                        have. By using Vara Khata, you agree to the collection and use of
+                        have. By using Rent Book, you agree to the collection and use of
                         information as described here.
                     </p>
 
@@ -77,7 +77,7 @@ export default function PrivacyPolicy() {
 
                     <Section number={2} title="How We Use Your Information">
                         <ul className="list-disc list-inside space-y-1 text-gray-600">
-                            <li>To create and manage your Vara Khata account and subscription.</li>
+                            <li>To create and manage your Rent Book account and subscription.</li>
                             <li>To verify subscription payments and activate your account.</li>
                             <li>
                                 To provide core features such as rent collection, tenant management, and
@@ -165,7 +165,7 @@ export default function PrivacyPolicy() {
 
                     <Section number={8} title="Children's Privacy">
                         <p className="text-gray-600">
-                            Vara Khata is intended for use by adults managing rental properties. We do
+                            Rent Book is intended for use by adults managing rental properties. We do
                             not knowingly collect personal information from children under 18.
                         </p>
                     </Section>
@@ -173,8 +173,7 @@ export default function PrivacyPolicy() {
                     <Section number={9} title="Changes to This Policy">
                         <p className="text-gray-600">
                             We may update this Privacy Policy from time to time. Material changes will
-                            be communicated via in-app notification or email. Continued use of Vara
-                            Khata after changes take effect constitutes acceptance of the revised
+                            be communicated via in-app notification or email. Continued use of Rent Book after changes take effect constitutes acceptance of the revised
                             policy.
                         </p>
                     </Section>
@@ -182,8 +181,7 @@ export default function PrivacyPolicy() {
                     <Section number={10} title="Contact Us">
                         <p className="text-gray-600">
                             If you have questions about this Privacy Policy or how your data is
-                            handled, please contact Jabed International through the official Vara
-                            Khata channels provided in the app.
+                            handled, please contact Jabed International through the official Rent Book channels provided in the app.
                         </p>
                     </Section>
 
@@ -216,7 +214,7 @@ export default function PrivacyPolicy() {
 
             {/* FOOTER */}
             <footer className="py-8 px-6 text-center text-sm mt-4 text-[#6B7A99]">
-                <p>© 2026 Vara Khata by Jabed International. All rights reserved.</p>
+                <p>© 2026  Rent Book by Jabed International. All rights reserved.</p>
                 <p className="mt-1">Questions? Contact us through the app.</p>
             </footer>
         </div>

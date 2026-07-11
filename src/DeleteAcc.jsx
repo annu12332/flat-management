@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-/* NOTE: confirm the exact endpoint/payload shape with backend before shipping —
-   this follows the same request pattern as the subscription API. */
-const DELETE_ACCOUNT_API_URL =
-    "https://varakhata.jabedinternational.com/api/account/delete-request/";
+/* DUMMY PAGE — no real API call. Submission is simulated locally with a
+   short delay so the UI/UX can be demoed and reviewed before the real
+   account-deletion endpoint exists on the backend. Swap handleSubmit's
+   body for a real apiFetch(...) call once that endpoint is ready. */
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const REASONS = [
     "Not using the app anymore",
@@ -16,42 +18,39 @@ const REASONS = [
 ];
 
 export default function DeleteAccount() {
-    const [mobile, setMobile] = useState("");
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [reason, setReason] = useState("");
     const [details, setDetails] = useState("");
     const [confirmed, setConfirmed] = useState(false);
-    const [mobileTouched, setMobileTouched] = useState(false);
+
+    const [emailTouched, setEmailTouched] = useState(false);
+    const [passwordTouched, setPasswordTouched] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
 
-    const mobileOk = /^01[3-9]\d{8}$/.test(mobile.trim());
-    const canSubmit = mobileOk && reason && confirmed && !submitting;
+    const emailOk = EMAIL_RE.test(email.trim());
+    const passwordOk = password.length >= 6;
+    const canSubmit = emailOk && passwordOk && reason && confirmed && !submitting;
 
     const handleSubmit = async () => {
-        setMobileTouched(true);
+        setEmailTouched(true);
+        setPasswordTouched(true);
         setErrorMsg("");
-        if (!mobileOk || !reason || !confirmed) return;
+        if (!emailOk || !passwordOk || !reason || !confirmed) return;
 
         setSubmitting(true);
         try {
-            const payload = {
-                mobile_number: mobile.trim(),
-                reason,
-                details: details.trim(),
-            };
-
-            const res = await fetch(DELETE_ACCOUNT_API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-
-            if (!res.ok) {
-                throw new Error("Request failed");
-            }
+            // Dummy submission — no backend call. Replace this block with a
+            // real apiFetch("/api/account/delete-request", { method: "POST", body: ... })
+            // once the actual endpoint exists.
+            await new Promise((resolve) => setTimeout(resolve, 1200));
             setShowSuccess(true);
-        } catch (e) {
+        } catch (err) {
             setErrorMsg(
                 "অনুরোধটি পাঠাতে সমস্যা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন অথবা সরাসরি সাপোর্টে যোগাযোগ করুন।"
             );
@@ -63,16 +62,7 @@ export default function DeleteAccount() {
     return (
         <div className="font-['Inter',sans-serif] text-[#1B2D4F] bg-[#f4f6fa] min-h-screen">
             {/* NAV */}
-            <nav className="bg-[#111E35] py-4 px-6">
-                <div className="max-w-6xl mx-auto flex items-center justify-between">
-                    <Link
-                        to="/"
-                        className="text-sm flex items-center gap-1.5 text-slate-400 no-underline hover:text-white transition"
-                    >
-                        ← Back to home
-                    </Link>
-                </div>
-            </nav>
+           
 
             {/* PAGE HEADER */}
             <div className="bg-[#1B2D4F] py-12 px-6 text-center">
@@ -115,23 +105,58 @@ export default function DeleteAccount() {
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-[#1B2D4F]">
-                                Registered Mobile Number <span className="text-[#E91E63]">*</span>
+                                Registered Email <span className="text-[#E91E63]">*</span>
                             </label>
                             <input
-                                type="tel"
-                                value={mobile}
-                                onChange={(e) => setMobile(e.target.value)}
-                                onBlur={() => setMobileTouched(true)}
-                                maxLength={14}
-                                placeholder="e.g. 01XXXXXXXXX"
-                                className={`w-full border-2 rounded-xl py-3.5 px-4 text-[15px] outline-none transition-colors bg-white ${mobileTouched && !mobileOk
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                onBlur={() => setEmailTouched(true)}
+                                autoComplete="email"
+                                placeholder="you@example.com"
+                                className={`w-full border-2 rounded-xl py-3.5 px-4 text-[15px] outline-none transition-colors bg-white ${
+                                    emailTouched && !emailOk
                                         ? "border-red-500"
                                         : "border-[#e2e8f0] focus:border-[#1B2D4F]"
-                                    }`}
+                                }`}
                             />
-                            {mobileTouched && !mobileOk && (
+                            {emailTouched && !emailOk && (
                                 <div className="text-xs mt-1 text-red-500">
-                                    Please enter a valid 11-digit mobile number
+                                    Please enter a valid email address
+                                </div>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold mb-2 text-[#1B2D4F]">
+                                Confirm Your Password <span className="text-[#E91E63]">*</span>
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    onBlur={() => setPasswordTouched(true)}
+                                    autoComplete="current-password"
+                                    placeholder="••••••••"
+                                    className={`w-full border-2 rounded-xl py-3.5 px-4 pr-12 text-[15px] outline-none transition-colors bg-white ${
+                                        passwordTouched && !passwordOk
+                                            ? "border-red-500"
+                                            : "border-[#e2e8f0] focus:border-[#1B2D4F]"
+                                    }`}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((s) => !s)}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1B2D4F] text-xs font-semibold"
+                                >
+                                    {showPassword ? "Hide" : "Show"}
+                                </button>
+                            </div>
+                            {passwordTouched && !passwordOk && (
+                                <div className="text-xs mt-1 text-red-500">
+                                    Enter your current password to confirm it's really you
                                 </div>
                             )}
                         </div>
@@ -175,7 +200,7 @@ export default function DeleteAccount() {
                                 className="mt-1 w-4 h-4 accent-[#1B2D4F]"
                             />
                             <span className="text-sm text-gray-600">
-                                I understand this will permanently delete my Vara Khata account and all
+                                I understand this will permanently delete my Rent Book account and all
                                 associated data, and I have read the{" "}
                                 <Link to="/terms" className="text-[#1B2D4F] font-semibold underline">
                                     Terms &amp; Conditions
@@ -233,19 +258,19 @@ export default function DeleteAccount() {
                             Our team will process it within <strong>7 business days</strong>. You may
                             be contacted to confirm before final deletion.
                         </p>
-                        <Link
-                            to="/"
-                            className="block text-center py-4 bg-[#1B2D4F] hover:bg-[#111E35] text-white rounded-2xl font-bold no-underline transition"
+                        <button
+                            onClick={() => navigate("/")}
+                            className="block w-full text-center py-4 bg-[#1B2D4F] hover:bg-[#111E35] text-white rounded-2xl font-bold transition"
                         >
                             Back to Home
-                        </Link>
+                        </button>
                     </div>
                 </div>
             )}
 
             {/* FOOTER */}
             <footer className="py-8 px-6 text-center text-sm mt-4 text-[#6B7A99]">
-                <p>© 2026 Vara Khata by Jabed International. All rights reserved.</p>
+                <p>© 2026 Rent Book by Jabed International. All rights reserved.</p>
                 <p className="mt-1">Questions? Contact us through the app.</p>
             </footer>
         </div>

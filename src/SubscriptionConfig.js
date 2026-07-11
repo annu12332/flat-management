@@ -5,40 +5,7 @@ export const SHARED_SECRET = "VaraKhata_S3cur3_2026!@#";
 export const API_URL = "https://varakhata.jabedinternational.com/api/subscription/subscribe/";
 export const PAYMENT_NUMBER = "01944557101";
 
-export const PLANS = {
-    starter: {
-        name: "Starter", icon: "🚀", duration: "30 days subscription",
-        price: "৳500", amount: 500, id: 1,
-        perDay: "≈ ৳16.7 / day",
-        features: [
-            "Basic dashboard", "Rent collection system", "Manual invoice generation",
-            "Single building management", "Basic tenant list", "Email notifications",
-            "Monthly summary report",
-        ],
-    },
-    pro: {
-        name: "Pro", icon: "⭐", duration: "30 days subscription",
-        price: "৳1,200", amount: 1200, id: 2,
-        perDay: "≈ ৳40.0 / day", popular: true,
-        features: [
-            "Multi-building management", "Advanced rent tracking",
-            "Expense tracking & categorization", "Automated receipts",
-            "Downloadable reports (PDF/Excel)", "Tenant history tracking",
-            "Payment reminders (SMS/Email)", "Role-based access",
-        ],
-    },
-    "pro-yearly": {
-        name: "Pro Yearly", icon: "💎", duration: "365 days subscription",
-        price: "৳12,000", amount: 12000, id: 3,
-        perDay: "≈ ৳32.9 / day", save: "Save ৳2,400 / year",
-        features: [
-            "Everything in Pro", "2 months free pricing benefit", "Priority support",
-            "Advanced analytics dashboard", "Auto daily backup + restore history",
-            "Unlimited report exports", "API access", "Bulk notifications (SMS/WhatsApp)",
-            "Audit logs", "Custom invoice branding", "Early access to new features",
-        ],
-    },
-};
+
 
 /* ===================== Token decryption (unchanged logic) ===================== */
 export function decryptSubscriptionUrl(sig, ts, sharedSecret) {

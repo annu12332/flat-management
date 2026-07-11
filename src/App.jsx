@@ -6,6 +6,8 @@ import PaymentPage from "./Payment";
 import TermsAndConditions from "./TermsConditions";
 import PrivacyPolicy from "./PrivacyPolicy";
 import DeleteAccount from "./DeleteAcc";
+import LoginPage from "./LoginPage";
+import RegisterPage from "./Register";
 
 
 
@@ -26,6 +28,10 @@ export default function App() {
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/delete-account" element={<DeleteAccount />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+
       </Routes>
     </BrowserRouter>
   );

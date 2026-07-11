@@ -1,20 +1,42 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import {
-    PLANS,
-    SHARED_SECRET,
-    API_URL,
-    PAYMENT_NUMBER,
-    decryptSubscriptionUrl,
-} from "./SubscriptionConfig";
+import { SHARED_SECRET, API_URL, PAYMENT_NUMBER, decryptSubscriptionUrl } from "./SubscriptionConfig";
+
+/* Same base as the rest of the app's plan/subscribe calls.
+   If SubscriptionConfig.js already exports a BASE_URL, swap this for
+   `${BASE_URL}/api/subscription-plans` to keep a single source of truth. */
+const PLANS_API_URL = "https://varakhata.jabedinternational.com/api/subscription-plans";
+
+// Cosmetic helpers — API only sends name/price/duration_days/features,
+// so icon/badge/color are derived locally from the plan name.
+function getPlanPresentation(name = "") {
+    const key = name.toLowerCase();
+    if (key.includes("yearly")) {
+        return { icon: "🏆", popular: false, isYearly: true, save: "2 months free" };
+    }
+    if (key.includes("pro")) {
+        return { icon: "🚀", popular: true, isYearly: false, save: null };
+    }
+    return { icon: "⭐", popular: false, isYearly: false, save: null };
+}
+
+function formatTaka(amount) {
+    return `৳${Number(amount).toLocaleString("en-BD")}`;
+}
+
+function getDurationLabel(durationDays) {
+    return String(durationDays) === "365" ? "Yearly plan" : "Monthly plan";
+}
 
 export default function PaymentPage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    const urlPlan = searchParams.get("plan");
-    const currentPlan = PLANS[urlPlan] ? urlPlan : "starter";
-    const plan = PLANS[currentPlan];
+    const planId = searchParams.get("plan_id");
+
+    const [plans, setPlans] = useState([]);
+    const [plansLoading, setPlansLoading] = useState(true);
+    const [plansError, setPlansError] = useState(null);
 
     const [currentMethod, setCurrentMethod] = useState("bkash");
     const [senderNumber, setSenderNumber] = useState("");
@@ -23,57 +45,115 @@ export default function PaymentPage() {
     const [txnTouched, setTxnTouched] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [submitError, setSubmitError] = useState(null); // <-- proper error state
+    const [submitError, setSubmitError] = useState(null);
     const [termsOpen, setTermsOpen] = useState(false);
     const [copiedAccount, setCopiedAccount] = useState(false);
     const [copiedAmount, setCopiedAmount] = useState(false);
-    const [tokenError, setTokenError] = useState(null);
 
     const bearerTokenRef = useRef(null);
 
-    // If someone lands here without a valid plan in the URL, send them back to pick one
-    useEffect(() => {
-        if (!urlPlan || !PLANS[urlPlan]) {
-            const sig = searchParams.get("sig");
-            const ts = searchParams.get("ts");
-            const params = new URLSearchParams();
-            if (sig && ts) {
-                params.set("sig", sig);
-                params.set("ts", ts);
-            }
-            navigate(`/subscribe${params.toString() ? `?${params.toString()}` : ""}`, {
-                replace: true,
-            });
-        }
+    // Sends the user to /login, preserving the current URL so they can be
+    // bounced back here (e.g. with a fresh signed link) after logging in.
+    const redirectToLogin = useCallback(() => {
+        const redirectTarget = `${window.location.pathname}${window.location.search}`;
+        navigate(`/login?redirect=${encodeURIComponent(redirectTarget)}`, { replace: true });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Decrypt ?sig=&ts= (same behaviour as original)
+    const buildChangePlanUrl = useCallback(() => {
+        const sig = searchParams.get("sig");
+        const ts = searchParams.get("ts");
+        const params = new URLSearchParams();
+        if (sig && ts) {
+            params.set("sig", sig);
+            params.set("ts", ts);
+        }
+        return `/subscribe${params.toString() ? `?${params.toString()}` : ""}`;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams]);
+
+    // 1) Decrypt ?sig=&ts= into a bearer token, THEN fetch the live plan
+    //    list using that same token — the signed-link auth system is
+    //    unchanged, only the plan source is now dynamic (API, not a
+    //    static PLANS config). No token, or an expired/invalid one, sends
+    //    the user to /login instead of showing this page half-broken.
     useEffect(() => {
         const urlSig = searchParams.get("sig");
         const urlTs = searchParams.get("ts");
 
+        let token = null;
         if (urlSig && urlTs) {
             try {
-                bearerTokenRef.current = decryptSubscriptionUrl(urlSig, urlTs, SHARED_SECRET);
+                token = decryptSubscriptionUrl(urlSig, urlTs, SHARED_SECRET);
             } catch (e) {
                 console.error("Token decrypt failed:", e.message);
-                setTokenError(
-                    "এই লিংকের মেয়াদ শেষ হয়ে গেছে অথবা লিংকটি সঠিক নয়। অনুগ্রহ করে নতুন লিংক সংগ্রহ করুন।"
-                );
+                token = null; // expired / tampered / invalid link
             }
         }
+
+        if (!token) {
+            redirectToLogin();
+            return;
+        }
+        bearerTokenRef.current = token;
+
+        if (!planId) {
+            navigate(buildChangePlanUrl(), { replace: true });
+            return;
+        }
+
+        let isMounted = true;
+        async function loadPlans() {
+            setPlansLoading(true);
+            setPlansError(null);
+            try {
+                const res = await fetch(PLANS_API_URL, {
+                    headers: {
+                        Accept: "application/json",
+                        Authorization: `Bearer ${bearerTokenRef.current}`,
+                    },
+                });
+
+                if (res.status === 401) {
+                    // Token was accepted by decrypt() but the backend says
+                    // it's expired/invalid — same outcome, go to /login.
+                    redirectToLogin();
+                    return;
+                }
+
+                const body = await res.json().catch(() => null);
+                if (!res.ok) {
+                    throw new Error(body?.message || "Failed to load plan details.");
+                }
+                if (isMounted) setPlans(body?.data?.plans || []);
+            } catch (err) {
+                if (isMounted) setPlansError(err.message || "Failed to load plan details.");
+            } finally {
+                if (isMounted) setPlansLoading(false);
+            }
+        }
+        loadPlans();
+
+        return () => {
+            isMounted = false;
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const selectedPlan = plans.find((p) => String(p.id) === String(planId)) || null;
+
+    // 2) Once plans have loaded, if the requested plan_id doesn't exist
+    //    (bad link, deleted plan, etc.) send the user back to pick again.
     useEffect(() => {
-        if (tokenError) alert(tokenError);
+        if (!plansLoading && !plansError && planId && plans.length > 0 && !selectedPlan) {
+            navigate(buildChangePlanUrl(), { replace: true });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tokenError]);
+    }, [plansLoading, plansError, plans]);
 
     const senderOk = /^01[3-9]\d{8}$/.test(senderNumber.trim());
     const txnOk = transactionId.trim().length >= 6;
-    const canSubmit = senderOk && txnOk && !submitting;
+    const canSubmit = senderOk && txnOk && !submitting && !!selectedPlan;
 
     const copyText = useCallback(async (text, setCopied) => {
         try {
@@ -85,30 +165,19 @@ export default function PaymentPage() {
         }
     }, []);
 
-    const buildChangePlanUrl = () => {
-        const sig = searchParams.get("sig");
-        const ts = searchParams.get("ts");
-        const params = new URLSearchParams();
-        if (sig && ts) {
-            params.set("sig", sig);
-            params.set("ts", ts);
-        }
-        return `/subscribe${params.toString() ? `?${params.toString()}` : ""}`;
-    };
-
     const handleSubmit = async () => {
         setSenderTouched(true);
         setTxnTouched(true);
         setSubmitError(null);
-        if (!senderOk || !txnOk) return;
+        if (!senderOk || !txnOk || !selectedPlan) return;
 
         setSubmitting(true);
         try {
             const payload = {
-                plan_id: plan.id,
+                plan_id: selectedPlan.id,
                 payment_method: currentMethod,
                 transaction_id: transactionId.trim(),
-                amount: plan.amount,
+                amount: selectedPlan.price,
                 sender_number: senderNumber.trim(),
             };
 
@@ -123,10 +192,13 @@ export default function PaymentPage() {
                 body: JSON.stringify(payload),
             });
 
+            if (res.status === 401) {
+                redirectToLogin();
+                return;
+            }
+
             if (!res.ok) {
-                // Try to surface a useful message from the API, fall back to a generic one
-                let message =
-                    "Opps! Request not submitted..Try again.";
+                let message = "Opps! Request not submitted..Try again.";
                 try {
                     const data = await res.json();
                     if (data?.message) message = data.message;
@@ -140,10 +212,7 @@ export default function PaymentPage() {
 
             setShowSuccess(true);
         } catch (e) {
-            // Network / unexpected error — show error, not success
-            setSubmitError(
-                "Network Issue, please check your internet connection"
-            );
+            setSubmitError("Network Issue, please check your internet connection");
         } finally {
             setSubmitting(false);
         }
@@ -151,6 +220,41 @@ export default function PaymentPage() {
 
     const methodAccent = currentMethod === "bkash" ? "#E91E63" : "#F97316";
     const methodName = currentMethod === "bkash" ? "bKash" : "Nagad";
+
+    // ---- Loading / error states for the plan fetch itself ----
+    if (plansLoading) {
+        return (
+            <div className="font-['Inter',sans-serif] text-[#1B2D4F] bg-[#f4f6fa] min-h-screen flex items-center justify-center">
+                <p className="text-slate-500">Loading your plan…</p>
+            </div>
+        );
+    }
+
+    if (plansError) {
+        return (
+            <div className="font-['Inter',sans-serif] text-[#1B2D4F] bg-[#f4f6fa] min-h-screen flex items-center justify-center px-4">
+                <div className="text-center max-w-sm">
+                    <p className="text-red-500 font-semibold mb-4">{plansError}</p>
+                    <button
+                        type="button"
+                        onClick={() => window.location.reload()}
+                        className="px-5 py-2.5 rounded-xl bg-[#1B2D4F] text-white text-sm font-bold"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!selectedPlan) {
+        // Briefly true right before the redirect effect above kicks in.
+        return null;
+    }
+
+    const { icon } = getPlanPresentation(selectedPlan.name);
+    const durationLabel = getDurationLabel(selectedPlan.duration_days);
+    const formattedPrice = formatTaka(selectedPlan.price);
 
     return (
         <div className="font-['Inter',sans-serif] text-[#1B2D4F] bg-[#f4f6fa] min-h-screen">
@@ -203,14 +307,14 @@ export default function PaymentPage() {
                     {/* Selected plan summary */}
                     <div className="rounded-xl p-4 mb-6 flex items-center justify-between gap-3 bg-[#f4f6fa] border border-[#e2e8f0]">
                         <div className="flex items-center gap-3 min-w-0">
-                            <span className="text-2xl shrink-0">{plan.icon}</span>
+                            <span className="text-2xl shrink-0">{icon}</span>
                             <div className="min-w-0">
-                                <div className="font-bold text-[#1B2D4F] truncate">{plan.name}</div>
-                                <div className="text-xs text-[#6B7A99] truncate">{plan.duration}</div>
+                                <div className="font-bold text-[#1B2D4F] truncate">{selectedPlan.name}</div>
+                                <div className="text-xs text-[#6B7A99] truncate">{durationLabel}</div>
                             </div>
                         </div>
                         <div className="text-right shrink-0">
-                            <div className="font-bold text-xl sm:text-2xl text-[#1B2D4F]">{plan.price}</div>
+                            <div className="font-bold text-xl sm:text-2xl text-[#1B2D4F]">{formattedPrice}</div>
                             <Link
                                 to={buildChangePlanUrl()}
                                 className="text-xs text-[#1B2D4F] underline no-underline hover:underline"
@@ -226,20 +330,24 @@ export default function PaymentPage() {
                     </div>
                     <div className="flex gap-3 mb-6 mt-2">
                         <button
+                            type="button"
                             onClick={() => setCurrentMethod("bkash")}
-                            className={`flex-1 p-3 sm:p-3.5 rounded-xl cursor-pointer text-center font-semibold text-sm sm:text-[15px] border-2 transition-all ${currentMethod === "bkash"
+                            className={`flex-1 p-3 sm:p-3.5 rounded-xl cursor-pointer text-center font-semibold text-sm sm:text-[15px] border-2 transition-all ${
+                                currentMethod === "bkash"
                                     ? "border-[#E91E63] bg-[#FCE4EC] text-[#E91E63]"
                                     : "border-[#e2e8f0] bg-white text-[#1B2D4F]"
-                                }`}
+                            }`}
                         >
                             bKash
                         </button>
                         <button
+                            type="button"
                             onClick={() => setCurrentMethod("nagad")}
-                            className={`flex-1 p-3 sm:p-3.5 rounded-xl cursor-pointer text-center font-semibold text-sm sm:text-[15px] border-2 transition-all ${currentMethod === "nagad"
+                            className={`flex-1 p-3 sm:p-3.5 rounded-xl cursor-pointer text-center font-semibold text-sm sm:text-[15px] border-2 transition-all ${
+                                currentMethod === "nagad"
                                     ? "border-[#F97316] bg-[#fff7ed] text-[#F97316]"
                                     : "border-[#e2e8f0] bg-white text-[#1B2D4F]"
-                                }`}
+                            }`}
                         >
                             Nagad
                         </button>
@@ -279,11 +387,13 @@ export default function PaymentPage() {
                                             </div>
                                         </div>
                                         <button
+                                            type="button"
                                             onClick={() => copyText(PAYMENT_NUMBER, setCopiedAccount)}
-                                            className={`flex items-center gap-2 rounded-lg py-2 px-3 font-semibold text-xs transition-all border shrink-0 ${copiedAccount
+                                            className={`flex items-center gap-2 rounded-lg py-2 px-3 font-semibold text-xs transition-all border shrink-0 ${
+                                                copiedAccount
                                                     ? "bg-green-50 border-green-600 text-green-600"
                                                     : "bg-[#f4f6fa] border-[#e2e8f0] text-[#1B2D4F] hover:bg-[#e8edf5]"
-                                                }`}
+                                            }`}
                                         >
                                             {copiedAccount ? "✓ Copied" : "📋 Copy"}
                                         </button>
@@ -300,14 +410,16 @@ export default function PaymentPage() {
                                     <div className="flex flex-wrap items-center justify-between rounded-xl p-3 gap-3 bg-[#e8edf5]">
                                         <div>
                                             <div className="text-xs text-[#6B7A99]">Amount</div>
-                                            <div className="font-bold text-xl text-[#1B2D4F]">{plan.price}</div>
+                                            <div className="font-bold text-xl text-[#1B2D4F]">{formattedPrice}</div>
                                         </div>
                                         <button
-                                            onClick={() => copyText(String(plan.amount), setCopiedAmount)}
-                                            className={`flex items-center gap-2 rounded-lg py-2 px-3 font-semibold text-xs transition-all border shrink-0 ${copiedAmount
+                                            type="button"
+                                            onClick={() => copyText(String(selectedPlan.price), setCopiedAmount)}
+                                            className={`flex items-center gap-2 rounded-lg py-2 px-3 font-semibold text-xs transition-all border shrink-0 ${
+                                                copiedAmount
                                                     ? "bg-green-50 border-green-600 text-green-600"
                                                     : "bg-[#f4f6fa] border-[#e2e8f0] text-[#1B2D4F] hover:bg-[#e8edf5]"
-                                                }`}
+                                            }`}
                                         >
                                             {copiedAmount ? "✓ Copied" : "📋 Copy"}
                                         </button>
@@ -347,10 +459,11 @@ export default function PaymentPage() {
                                     onBlur={() => setSenderTouched(true)}
                                     maxLength={14}
                                     placeholder="Enter your mobile number"
-                                    className={`w-full border-2 rounded-xl py-3.5 px-4 text-[15px] outline-none transition-colors bg-white ${senderTouched && !senderOk
+                                    className={`w-full border-2 rounded-xl py-3.5 px-4 text-[15px] outline-none transition-colors bg-white ${
+                                        senderTouched && !senderOk
                                             ? "border-red-500"
                                             : "border-[#e2e8f0] focus:border-[#1B2D4F]"
-                                        }`}
+                                    }`}
                                 />
                                 {senderTouched && !senderOk && (
                                     <div className="text-xs mt-1 text-red-500">
@@ -371,10 +484,11 @@ export default function PaymentPage() {
                                     }}
                                     onBlur={() => setTxnTouched(true)}
                                     placeholder="Enter your transaction ID"
-                                    className={`w-full border-2 rounded-xl py-3.5 px-4 text-[15px] outline-none transition-colors bg-white ${txnTouched && !txnOk
+                                    className={`w-full border-2 rounded-xl py-3.5 px-4 text-[15px] outline-none transition-colors bg-white ${
+                                        txnTouched && !txnOk
                                             ? "border-red-500"
                                             : "border-[#e2e8f0] focus:border-[#1B2D4F]"
-                                        }`}
+                                    }`}
                                 />
                                 {txnTouched && !txnOk && (
                                     <div className="text-xs mt-1 text-red-500">
@@ -397,6 +511,7 @@ export default function PaymentPage() {
                 {/* SUBMIT */}
                 <div className="mb-6">
                     <button
+                        type="button"
                         onClick={handleSubmit}
                         disabled={!canSubmit}
                         className="w-full py-4 bg-[#1B2D4F] hover:bg-[#111E35] disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-2xl text-base font-bold transition-all"
@@ -414,6 +529,7 @@ export default function PaymentPage() {
                 {/* TERMS accordion */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <button
+                        type="button"
                         onClick={() => setTermsOpen((v) => !v)}
                         className="w-full flex items-center justify-between p-5 text-left font-bold text-[#1B2D4F]"
                     >
@@ -483,7 +599,7 @@ export default function PaymentPage() {
 
             {/* FOOTER */}
             <footer className="py-8 px-6 text-center text-sm mt-4 text-[#6B7A99]">
-                <p>© 2026 Vara Khata by Jabed International. All rights reserved.</p>
+                <p>© 2026 Rent Book by Jabed International. All rights reserved.</p>
                 <p className="mt-1">Questions? Contact us through the app.</p>
             </footer>
         </div>
