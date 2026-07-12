@@ -2,14 +2,16 @@
 // Central place for all subscription-related API calls.
 // Adjust BASE_URL to match your environment (.env -> REACT_APP_API_BASE_URL)
 
-const BASE_URL =  "https://varakhata.jabedinternational.com";
+import { getToken } from "./api/clientApi"; // ✅ single source of truth for the auth token (vk_token)
+
+const BASE_URL = "https://varakhata.jabedinternational.com";
 
 /**
  * Small fetch wrapper: adds base url, JSON headers, auth token (if present),
  * and throws a normalized Error on non-2xx responses.
  */
 async function apiFetch(path, options = {}) {
-    const token = localStorage.getItem("authToken"); // adjust to your auth storage
+    const token = getToken(); // ✅ was: localStorage.getItem("authToken") — wrong/dead key, fixed
 
     const res = await fetch(`${BASE_URL}${path}`, {
         ...options,
