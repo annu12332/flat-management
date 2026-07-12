@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { SHARED_SECRET, API_URL, PAYMENT_NUMBER, decryptSubscriptionUrl } from "./SubscriptionConfig";
-import { getToken } from "../api/client";
+import { getToken } from "./api/clientApi";
 
 /* Same base as the rest of the app's plan/subscribe calls.
    If SubscriptionConfig.js already exports a BASE_URL, swap this for
