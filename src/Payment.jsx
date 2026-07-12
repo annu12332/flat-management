@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { SHARED_SECRET, API_URL, PAYMENT_NUMBER, decryptSubscriptionUrl } from "./SubscriptionConfig";
+import { getToken } from "../api/client";
 
 /* Same base as the rest of the app's plan/subscribe calls.
    If SubscriptionConfig.js already exports a BASE_URL, swap this for
@@ -72,26 +73,46 @@ export default function PaymentPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
 
-    // 1) Decrypt ?sig=&ts= into a bearer token, THEN fetch the live plan
-    //    list using that same token — the signed-link auth system is
-    //    unchanged, only the plan source is now dynamic (API, not a
-    //    static PLANS config). No token, or an expired/invalid one, sends
-    //    the user to /login instead of showing this page half-broken.
+    // 1) Resolve a bearer token from EITHER of two sources:
+    //    a) a signed link (?sig=&ts=) — used when someone arrives from an
+    //       external/public link without being logged in, or
+    //    b) the normal login token — used when navigating here from
+    //       inside the app (SubscribePage -> "Choose Plan" -> here).
+    //    Only redirect to /login if NEITHER source produces a token.
+    //    (Temporary [PaymentPage debug] logs included below — remove once
+    //    the redirect issue is confirmed fixed.)
     useEffect(() => {
         const urlSig = searchParams.get("sig");
         const urlTs = searchParams.get("ts");
 
+        console.log("[PaymentPage debug] urlSig present?", !!urlSig, "urlTs present?", !!urlTs);
+
         let token = null;
+
         if (urlSig && urlTs) {
             try {
                 token = decryptSubscriptionUrl(urlSig, urlTs, SHARED_SECRET);
+                console.log(
+                    "[PaymentPage debug] decrypt succeeded, token:",
+                    token ? `${token.slice(0, 12)}...` : token
+                );
             } catch (e) {
-                console.error("Token decrypt failed:", e.message);
+                console.error("[PaymentPage debug] Token decrypt failed:", e.message);
                 token = null; // expired / tampered / invalid link
             }
+        } else {
+            console.log("[PaymentPage debug] no sig/ts in URL — skipping decrypt");
+        }
+
+        // No valid signed link? Fall back to the normal in-app login token.
+        if (!token) {
+            const loginToken = getToken();
+            console.log("[PaymentPage debug] falling back to getToken():", loginToken ? "found" : "null");
+            token = loginToken;
         }
 
         if (!token) {
+            console.log("[PaymentPage debug] no token from either source — redirecting to /login");
             redirectToLogin();
             return;
         }
@@ -115,8 +136,7 @@ export default function PaymentPage() {
                 });
 
                 if (res.status === 401) {
-                    // Token was accepted by decrypt() but the backend says
-                    // it's expired/invalid — same outcome, go to /login.
+                    console.log("[PaymentPage debug] subscription-plans returned 401 — redirecting to /login");
                     redirectToLogin();
                     return;
                 }
