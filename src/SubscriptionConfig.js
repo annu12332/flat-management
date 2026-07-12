@@ -1,7 +1,7 @@
 import CryptoJS from "crypto-js";
 
 /* ===================== CONFIG (unchanged from original) ===================== */
-export const SHARED_SECRET = "VaraKhata_S3cur3_2026!@#";
+export const SHARED_SECRET = "RentBook_S3cur3_2026!@#";
 export const API_URL = "https://varakhata.jabedinternational.com/api/subscription/subscribe/";
 export const PAYMENT_NUMBER = "01944557101";
 
