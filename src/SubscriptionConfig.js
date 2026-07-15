@@ -2,7 +2,7 @@ import CryptoJS from "crypto-js";
 
 /* ===================== CONFIG ===================== */
 export const SHARED_SECRET = "RentBook_S3cur3_2026!@#";
-export const API_URL = "https://varakhata.jabedinternational.com/api/subscription/subscribe/";
+export const API_URL = "https://varakhata.jabedinternational.com/api/subscription/subscribe";
 export const PAYMENT_NUMBER = "01944557101";
 
 /* ===================== Key derivation strategies (for diagnosis) =====================
