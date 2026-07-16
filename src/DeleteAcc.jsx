@@ -200,7 +200,7 @@ export default function DeleteAccount() {
                                 className="mt-1 w-4 h-4 accent-[#1B2D4F]"
                             />
                             <span className="text-sm text-gray-600">
-                                I understand this will permanently delete my Rent Book account and all
+                                I understand this will permanently delete my RentBook flow account and all
                                 associated data, and I have read the{" "}
                                 <Link to="/terms" className="text-[#1B2D4F] font-semibold underline">
                                     Terms &amp; Conditions
@@ -270,7 +270,7 @@ export default function DeleteAccount() {
 
             {/* FOOTER */}
             <footer className="py-8 px-6 text-center text-sm mt-4 text-[#6B7A99]">
-                <p>© 2026 Rent Book by Jabed International. All rights reserved.</p>
+                <p>© 2026 RentBook flow by Jabed International. All rights reserved.</p>
                 <p className="mt-1">Questions? Contact us through the app.</p>
             </footer>
         </div>

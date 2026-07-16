@@ -38,7 +38,7 @@ function LedgerSeal() {
                     fontWeight="700"
                     letterSpacing="2"
                 >
-                    Rent Book
+                    RentBook flow
                 </text>
                 <text
                     x="66"
@@ -153,7 +153,7 @@ export default function LoginPage() {
                         className="text-white text-2xl font-bold tracking-tight"
                         style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
                     >
-                        Rent Book
+                        RentBook flow
                     </span>
                     <p className="text-slate-400 text-sm mt-1">by Jabed International</p>
                 </div>
@@ -173,7 +173,7 @@ export default function LoginPage() {
 
                 <div className="relative z-10 flex items-end justify-between">
                     <p className="text-slate-500 text-xs">
-                        © 2026 Rent Book by Jabed International.
+                        © 2026 RentBook flow by Jabed International.
                     </p>
                     <LedgerSeal />
                 </div>
@@ -187,7 +187,7 @@ export default function LoginPage() {
                             className="text-[#1B2D4F] text-2xl font-bold"
                             style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
                         >
-                            Rent Book
+                            RentBook flow
                         </span>
                     </div>
 
@@ -308,7 +308,7 @@ export default function LoginPage() {
                     </form>
 
                     <p className="text-center text-sm text-slate-500 mt-8">
-                        New to Rent Book?{" "}
+                        New to RentBook flow?{" "}
                         <Link to="/register" className="font-semibold text-[#1B2D4F] hover:underline">
                             Create an account
                         </Link>

@@ -28,7 +28,7 @@ function LedgerSeal() {
                 <circle cx="66" cy="66" r="58" strokeDasharray="3 4" />
                 <circle cx="66" cy="66" r="48" />
                 <text x="66" y="54" textAnchor="middle" fill="#E8DDD0" fontSize="15" fontFamily="Georgia, serif" fontWeight="700" letterSpacing="2">
-                    Rent Book
+                    RentBook flow
                 </text>
                 <text x="66" y="76" textAnchor="middle" fill="#E8DDD0" fontSize="10" fontFamily="Georgia, serif" letterSpacing="3">
                     SECURE LEDGER
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                     <div className="text-6xl mb-4">🎉</div>
                     <h2 className="text-2xl font-bold mb-2 text-[#1B2D4F]">Account created!</h2>
                     <p className="text-sm text-[#6B7A99] mb-6">
-                        Your Rent Book account is ready. Log in to start managing your properties.
+                        Your RentBook flow account is ready. Log in to start managing your properties.
                     </p>
                     <button
                         onClick={() => navigate("/login")}
@@ -158,7 +158,7 @@ export default function RegisterPage() {
 
                 <div className="relative z-10">
                     <span className="text-white text-2xl font-bold tracking-tight" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                        Rent Book
+                        RentBook flow
                     </span>
                     <p className="text-slate-400 text-sm mt-1">by Jabed International</p>
                 </div>
@@ -174,7 +174,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="relative z-10 flex items-end justify-between">
-                    <p className="text-slate-500 text-xs">© 2026 Rent Book by Jabed International.</p>
+                    <p className="text-slate-500 text-xs">© 2026 RentBook flow by Jabed International.</p>
                     <LedgerSeal />
                 </div>
             </div>
@@ -184,7 +184,7 @@ export default function RegisterPage() {
                 <div className="w-full max-w-sm">
                     <div className="lg:hidden text-center mb-8">
                         <span className="text-[#1B2D4F] text-2xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                            Rent Book
+                            RentBook flow
                         </span>
                     </div>
 

@@ -619,7 +619,7 @@ export default function PaymentPage() {
 
             {/* FOOTER */}
             <footer className="py-8 px-6 text-center text-sm mt-4 text-[#6B7A99]">
-                <p>© 2026 Rent Book by Jabed International. All rights reserved.</p>
+                <p>© 2026 RentBook flow by Jabed International. All rights reserved.</p>
                 <p className="mt-1">Questions? Contact us through the app.</p>
             </footer>
         </div>

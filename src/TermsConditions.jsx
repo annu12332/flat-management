@@ -32,7 +32,7 @@ export default function TermsAndConditions() {
                 <div className="max-w-2xl mx-auto">
                     <h1 className="text-3xl font-bold text-white mb-2">Terms &amp; Conditions</h1>
                     <p className="text-slate-400">
-                        Please read these terms carefully before using Rent Book.
+                        Please read these terms carefully before using RentBook flow.
                     </p>
                     <p className="text-slate-500 text-xs mt-2">Last updated: July 2026</p>
                 </div>
@@ -42,9 +42,9 @@ export default function TermsAndConditions() {
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 text-sm leading-relaxed text-gray-700">
                     <Section number={1} title="Acceptance of Terms">
                         <p>
-                            By subscribing to Rent Book, you ("User") agree to be bound by these Terms
+                            By subscribing to RentBook flow, you ("User") agree to be bound by these Terms
                             and Conditions. If you do not agree, please do not use the application.
-                            These terms apply to all users of Rent Book, developed and operated by
+                            These terms apply to all users of RentBook flow, developed and operated by
                             Jabed International.
                         </p>
                     </Section>
@@ -52,13 +52,10 @@ export default function TermsAndConditions() {
                     <Section number={2} title="Subscription & Payment">
                         <ul className="list-disc list-inside space-y-1 text-gray-600">
                             <li>
-                                Rent Book operates on a subscription-based model. Access to the app
+                                RentBook flow operates on a subscription-based model. Access to the app
                                 requires an active, paid subscription.
                             </li>
-                            <li>
-                                Subscriptions are available in three plans: Starter (৳500 / 30 days), Pro
-                                (৳1,200 / 30 days), and Pro Yearly (৳12,000 / 365 days).
-                            </li>
+                            
                             <li>
                                 All payments are accepted via bKash or Nagad. After submitting your sender
                                 number and Transaction ID, your subscription will be reviewed and
@@ -76,36 +73,12 @@ export default function TermsAndConditions() {
                         </ul>
                     </Section>
 
-                    <Section number={3} title="Refund Policy">
-                        <ul className="list-disc list-inside space-y-1 text-gray-600">
-                            <li>
-                                All plans include a <strong>7-day money-back guarantee</strong> from the
-                                date of activation.
-                            </li>
-                            <li>
-                                To request a refund within 7 days, contact Jabed International with your
-                                registered mobile number and Transaction ID.
-                            </li>
-                            <li>
-                                Refunds will be processed within 5–7 business days to your original bKash
-                                or Nagad account.
-                            </li>
-                            <li>No refunds will be issued after 7 days of activation.</li>
-                            <li>
-                                Refund requests submitted with fraudulent or incorrect transaction
-                                information will be rejected.
-                            </li>
-                            <li>
-                                Jabed International reserves the right to decline a refund if there is
-                                evidence of misuse or policy violation.
-                            </li>
-                        </ul>
-                    </Section>
+                    
 
-                    <Section number={4} title="Use of the Application">
+                    <Section number={3} title="Use of the Application">
                         <ul className="list-disc list-inside space-y-1 text-gray-600">
                             <li>
-                                Rent Book is licensed to you for personal or business use in managing
+                                RentBook flow is licensed to you for personal or business use in managing
                                 your own rental properties. You may not resell, sublicense, or
                                 redistribute access to the app.
                             </li>
@@ -114,7 +87,7 @@ export default function TermsAndConditions() {
                                 tenant information, transaction records, and property details.
                             </li>
                             <li>
-                                You agree not to use Rent Book for any unlawful purpose, including
+                                You agree not to use RentBook flow for any unlawful purpose, including
                                 fraudulent rental transactions, falsification of tenant records, or any
                                 activity that violates Bangladesh law.
                             </li>
@@ -125,10 +98,10 @@ export default function TermsAndConditions() {
                         </ul>
                     </Section>
 
-                    <Section number={5} title="Data Privacy & Security">
+                    <Section number={4} title="Data Privacy & Security">
                         <ul className="list-disc list-inside space-y-1 text-gray-600">
                             <li>
-                                Rent Book stores tenant information, transaction records, and property
+                                RentBook flow stores tenant information, transaction records, and property
                                 data on secure servers. We take reasonable precautions to protect your
                                 data.
                             </li>
@@ -160,7 +133,7 @@ export default function TermsAndConditions() {
                         </p>
                     </Section>
 
-                    <Section number={6} title="Service Availability & Updates">
+                    <Section number={5} title="Service Availability & Updates">
                         <ul className="list-disc list-inside space-y-1 text-gray-600">
                             <li>
                                 We strive to maintain 99% uptime but do not guarantee uninterrupted
@@ -168,7 +141,7 @@ export default function TermsAndConditions() {
                             </li>
                             <li>
                                 Jabed International reserves the right to update, modify, or discontinue
-                                features of Rent Book at any time, with reasonable notice where possible.
+                                features of RentBook flow at any time, with reasonable notice where possible.
                             </li>
                             <li>
                                 Feature availability varies by subscription plan. Upgrades can be made at
@@ -177,9 +150,9 @@ export default function TermsAndConditions() {
                         </ul>
                     </Section>
 
-                    <Section number={7} title="Limitation of Liability">
+                    <Section number={6} title="Limitation of Liability">
                         <p>
-                            Rent Book is a tool to assist with rental management. Jabed International
+                            RentBook flow is a tool to assist with rental management. Jabed International
                             is not responsible for financial losses, disputes between landlords and
                             tenants, or any damages arising from reliance on data within the
                             application. The app is provided "as is," without warranties of any kind
@@ -187,7 +160,7 @@ export default function TermsAndConditions() {
                         </p>
                     </Section>
 
-                    <Section number={8} title="Termination">
+                    <Section number={7} title="Termination">
                         <ul className="list-disc list-inside space-y-1 text-gray-600">
                             <li>
                                 Jabed International may suspend or terminate your account if you violate
@@ -209,15 +182,15 @@ export default function TermsAndConditions() {
                         </ul>
                     </Section>
 
-                    <Section number={9} title="Governing Law">
+                    <Section number={8} title="Governing Law">
                         <p>
                             These Terms and Conditions are governed by the laws of the People's
-                            Republic of Bangladesh. Any disputes arising from the use of Rent Book
+                            Republic of Bangladesh. Any disputes arising from the use of RentBook flow
                             shall be subject to the jurisdiction of the courts of Bangladesh.
                         </p>
                     </Section>
 
-                    <Section number={10} title="Changes to Terms">
+                    <Section number={9} title="Changes to Terms">
                         <p>
                             Jabed International reserves the right to update these Terms and Conditions
                             at any time. Continued use of the application after changes constitutes
@@ -226,10 +199,10 @@ export default function TermsAndConditions() {
                         </p>
                     </Section>
 
-                    <Section number={11} title="Contact">
+                    <Section number={10} title="Contact">
                         <p>
                             For support, refund requests, or any questions regarding these terms,
-                            please contact Jabed International through the official Rent Book
+                            please contact Jabed International through the official RentBook flow
                             channels provided in the app.
                         </p>
                     </Section>
@@ -237,7 +210,7 @@ export default function TermsAndConditions() {
                     <div className="rounded-xl p-4 mt-4 bg-[#f4f6fa] border border-[#e2e8f0]">
                         <p className="text-xs text-[#6B7A99]">
                             By submitting a payment request, you confirm that you have read,
-                            understood, and agreed to these Terms and Conditions and our Refund Policy.
+                            understood, and agreed to these Terms and Conditions and our Privacy Policy.
                         </p>
                     </div>
                 </div>
@@ -260,7 +233,7 @@ export default function TermsAndConditions() {
 
             {/* FOOTER */}
             <footer className="py-8 px-6 text-center text-sm mt-4 text-[#6B7A99]">
-                <p>© 2026 Rent Book by Jabed International. All rights reserved.</p>
+                <p>© 2026 RentBook Flow by Jabed International. All rights reserved.</p>
                 <p className="mt-1">Questions? Contact us through the app.</p>
             </footer>
         </div>
